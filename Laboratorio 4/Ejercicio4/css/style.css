@@ -1,0 +1,92 @@
+.contenedor {
+    width: 1000px;
+    height: 1000px;
+    display: flex;
+    flex-direction: row;
+}
+
+.servicios {
+    width: 10px;
+    height: 10px;
+    display: flex;
+    margin-top: 5px;
+    justify-content: space-between;
+
+}
+
+.servicios a {
+    margin-left: 13px;
+}
+
+.servicios2 {
+    display: flex;
+}
+
+svg {
+    width: 15px;
+    height: 15px;
+}
+
+a {
+    display: flex;
+    text-decoration: none;
+}
+
+.final {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    text-align: right;
+    margin-left: 400px;
+}
+
+.sponsor strong,
+.sponsor svg,
+.download strong{
+    margin: 3px;
+}
+
+/**Colores de los iconos **/
+.docs{
+    color: #93BFCF;
+}
+
+.videos{
+    color: #C9F4AA;
+}
+
+.expo{
+    color: #FCE22A;
+}
+
+.love{
+    color: #D61355;
+}
+
+.backers{
+    color: #F94A29;
+}
+
+.github{
+    color: #000;
+}
+
+.twitter{
+    color: #0081C9
+}
+
+.sponsor{
+    background-color: #FFCEFE;
+    height: 20px;
+    width: 65px;
+    font-size: 10px;
+    border-radius: 5px;
+}
+
+.download{
+    background-color: #C9F4AA;
+    height: 20px;
+    width: 65px;
+    font-size: 10px;
+    border-radius: 5px;
+}
