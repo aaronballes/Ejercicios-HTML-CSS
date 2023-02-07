@@ -4,48 +4,77 @@
 <head>
     <meta charset="utf-8" />
     <meta name="description" content="Ejercicios laboratorio unidad 4" />
-    <meta name="author" content="tu_nombre" />
-    <title>Ejercicio x</title>
+    <meta name="author" content="aaron" />
+    <link rel="stylesheet" href="css/style.css">
+
+    <title>Ejercicio 5</title>
 </head>
 
 
 <body>
-    <div class="contacto">
-        <h3>Contacto</h3>
-        <h4>Centro San Valero</h4>
-        <p>
-            C/ Violeta Parra 9 50015 Zaragoza, España
-            Tel. 976 466 599
-            Fax 976466 590
-            <span>info@svalero.com</span>
-        </p>
-        <h4>Agencia de Colocación</h4>
-        <p>
-            Tel. 976 510 314
-            Fax 976 515 037
-            <span>agenciac@svalero.com</span>
-        </p>
-        <h4>Centro Sociolaboral Casco Viejo</h4>
-        <p>
-            C/ Rebolería 10 - 12. 50002 Zaragoza
-            Tel. 976 203 709
-            Fax 976 203 708
-            <span>cslcascoviejo@svalero.com</span>
-        </p>
-        <h4>Secretaría de SEAS Estudios Superiores Abiertos</h4>
-        <p>
-            Tel. 900 922 288 | 976 700 660
-            Fax 976 228 793
-            <span>info@estudiosabiertos.com</span>
-        </p>
+    <div class="contenedor">
+        <div class="contacto">
+            <h3>Contacto</h3>
+            <h4>Centro San Valero</h4>
+            <p>
+                C/ Violeta Parra 9 50015 Zaragoza, España
+                Tel. 976 466 599
+                Fax 976466 590
+                <span>info@svalero.com</span>
+            </p>
+            <h4>Agencia de Colocación</h4>
+            <p>
+                Tel. 976 510 314
+                Fax 976 515 037
+                <span>agenciac@svalero.com</span>
+            </p>
+            <h4>Centro Sociolaboral Casco Viejo</h4>
+            <p>
+                C/ Rebolería 10 - 12. 50002 Zaragoza
+                Tel. 976 203 709
+                Fax 976 203 708
+                <span>cslcascoviejo@svalero.com</span>
+            </p>
+            <h4>Secretaría de SEAS Estudios Superiores Abiertos</h4>
+            <p>
+                Tel. 900 922 288 | 976 700 660
+                Fax 976 228 793
+                <span>info@estudiosabiertos.com</span>
+            </p>
+        </div>
+        <form class="formulario">
+            <fieldset>
+                <div class="nombre">
+                    <input type="text" name="Nombre" placeholder="Nombre y apellidos *">
+                </div>
+                <div class="email">
+                    <input type="email" name="emai" placeholder="E-mail *">
+                </div>
+                <div class="telefono">
+                    <input type="tel" name="tele" placeholder="Teléfono *">
+                </div>
+                <div class="asunto">
+                    <input type="text" name="asunto" placeholder="Asunto *">
+                </div>
+                <div class="mensaje">
+                    <textarea name="input-text" placeholder="Mensaje *"></textarea>
+                </div>
+                <div class="marcadores">
+                    <input type="checkbox"><span>*</span>He leído y acepto la <span>Politica de privacidad</span>del
+                    responsable FSV sobre el tratamiento de mis datos personales con finalidad de atender mi consulta y
+                    comunicarse comercialmente por vía electrónica.
+                </div>
+                <div>
+                    <input type="checkbox">Deseo recibir comunicaciones sobre eventos y otra oferta formativa de FSV por
+                    vía electrónica.
+                </div>
+                <div class="boton">
+                    <input type="submit" value="Enviar mensaje">
+                </div>
+            </fieldset>
+        </form>
     </div>
-    <form class="formulario">
-        <fieldset>
-            <div class="Nombre">
-                <input type="text" name="Nombre" placeholder="Nombre y apellidos">
-            </div>
-        </fieldset>
-    </form>
+
 </body>
 
 </html>

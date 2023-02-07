@@ -1,0 +1,27 @@
+:root{
+    --azul: #009ddb;
+
+}
+body{
+    font-size: 0.75rem;
+    font-family: 'Montserrat', sans-serif;
+
+}
+.contenedor{
+    display: flex;
+    justify-content: space-between;
+}
+
+.contacto{
+    width: 50%;
+    height: 50%;
+}
+
+.formulario{
+    display: flex;
+    justify-content: end;
+}
+.boton{
+    display: flex;
+    justify-content: end;
+}
