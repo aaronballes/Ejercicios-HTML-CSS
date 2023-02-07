@@ -19,13 +19,11 @@
     color: var(--blanco);
     background-color: var(--oscuro);
     border-radius: 5px 5px 0px 0px;
-    ;
-    
 }
 
-p,img{
+/* p,img{
     display: inline-block;
-}
+} */
 
 .titulo p{
     padding: 3px;
