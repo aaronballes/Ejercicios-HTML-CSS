@@ -7,20 +7,17 @@
 .azul{
     background-color: aquamarine;
     width: 200px;
-    height: 1000px;
-    margin-left: 5px;
+    height: 1000px; 
 }
 
 .rojo{
     background-color: red;
     width: 200px;
     height: 1000px;
-    margin-left: 5px;
 }
 
 .amarillo{
     background-color: yellow;
     width: 200px;
     height: 1000px;
-    margin-left: 5px;
 }

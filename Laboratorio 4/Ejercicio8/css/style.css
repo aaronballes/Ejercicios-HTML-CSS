@@ -1,0 +1,164 @@
+.contenedor {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+}
+
+/* Header */
+.header {
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    background-color: #005E53;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: 'Roboto Medium', sans-serif;
+    color: white;
+}
+
+.flecha img {
+    width: 30px;
+}
+
+.user {
+    display: flex;
+    flex-direction: row;
+}
+
+.nombre {
+    margin-left: 3%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5%;
+
+}
+
+.herramientas {
+    display: flex;
+    flex-direction: row;
+    margin-left: 50px;
+}
+
+.user img {
+    height: 70px;
+}
+
+.zoom img {
+    height: 30px;
+
+}
+
+.call {
+    margin-left: 30%;
+}
+
+.call img {
+    height: 30px;
+
+}
+
+.more {
+    margin-left: 30%;
+}
+
+.more img {
+    height: 30px;
+
+}
+
+/* Chat */
+.chat {
+    background-color: #EBF7FF;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 27px;
+}
+
+.mensaje-enviado {
+    position: relative;
+    width: 300px;
+    background-color: #D5FFC5;
+    margin: 10px;
+    margin-left: 30%;
+    border-radius: 5%;
+    padding: 10px;
+}
+
+.mensaje-enviado span {
+    position: absolute;
+    right: 0;
+    margin: 10px;
+    font-size: 15px;
+    margin-right: 30px;
+
+}
+
+.mensaje-recibido {
+    position: relative;
+    width: 300px;
+    background-color: white;
+    margin: 10px;
+    border-radius: 5%;
+    padding: 10px;
+}
+
+.mensaje-recibido span {
+    position: absolute;
+    right: 0;
+    margin: 10px;
+    font-size: 15px;
+
+}
+
+.tick{
+    position: absolute;
+    right: 0;
+    width: 25px;
+    margin: 5px;
+}
+
+/* Escribir mensaje */
+.escribir{
+    display: flex;
+    align-items: center;
+    background-color: #EBF7FF;
+}
+
+.rectangulo{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px;
+    background-color: white;
+    width: 82%;
+    height: 40px;
+    border-radius: 5px;
+    box-shadow:  1px 1px 1px 1px #958a8a;
+}
+
+.emoticono img{
+    width: 30px;
+    height: 30px;
+}
+
+.mensaje{
+    font-size: 30px;
+    color: gray;
+    margin-left: 10px;
+}
+
+.clip img{
+    width: 30px;
+    height: 30px;
+}
+
+.camara img{
+    width: 30px;
+    height: 30px;
+}
+
+.audio img{
+    width: 60px;
+    margin: 5px;
+}

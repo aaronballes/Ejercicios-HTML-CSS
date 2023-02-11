@@ -1,0 +1,38 @@
+
+.grisaceo {
+    grid-area: header;
+    background-color: aquamarine; 
+}
+
+.azul {
+    grid-area: main;
+    background-color: blue;
+    
+}
+
+.morado {
+    grid-area: main2;
+    background-color: purple;
+}
+
+.rojo {
+    grid-area: sidebar;
+    background-color: red;
+
+}
+
+.amarillo {
+    grid-area: footer;
+    background-color: yellow;
+}
+
+.contenedor {
+    display: grid;
+    grid-template-columns: 50px 50px 50px 50px 50px ;
+    grid-template-rows: 50px 50px 50px 50px;
+    grid-template-areas:
+    "header header header header header"
+    "main main main2 main2 sidebar"
+    "main main main2 main2 sidebar"
+    "footer footer footer footer sidebar";
+}
