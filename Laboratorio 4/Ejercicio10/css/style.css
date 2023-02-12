@@ -1,0 +1,97 @@
+.contenedor{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.indice-columna{
+    display: none;
+}
+
+.principal{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    border: 1px solid gray;
+    padding: 2rem;
+}
+
+.botones{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+/* Lo de arriba */
+select{
+    width: 100%;
+    height: 35px;
+}
+
+.crear{
+    background-color: #C92C6D;
+    border-radius: 25px;
+    margin: 10px;
+    padding: 10px;
+}
+.funciones{
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    margin-top: 20px;
+}
+
+.funcion{
+    margin-right: 10px;
+}
+
+/* Temas */
+.tarea,
+.tarea-borrador{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.tarea-borrador{
+    color: gray;
+}
+
+.tarea-titulo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.principal h2{
+    border-bottom: 2px solid #C92C6D;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #C92C6D;
+}
+
+span{
+    font-size: 15px;
+    margin: 5px;
+}
+
+p{
+    margin-left: 10px;
+}
+
+.tarea svg{
+    background-color: #C92C6D;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.tarea-borrador svg{
+    background-color: gray;
+    border-radius: 50%;
+    padding: 10px;
+}
+
