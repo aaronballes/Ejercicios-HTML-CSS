@@ -1,0 +1,114 @@
+.contenedor {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.servicios {
+    width: 100%;
+    display: flex;
+    margin-top: 5px;
+    justify-content: space-between;
+
+}
+
+.servicios a {
+    margin-left: 13px;
+}
+
+.servicios2 {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+svg {
+    width: 15px;
+    height: 15px;
+}
+
+a {
+    display: flex;
+    text-decoration: none;
+}
+
+.final {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.sponsor strong,
+.sponsor svg,
+.download strong{
+    margin: 3px;
+}
+
+.docs span,
+.videos span,
+.expo span,
+.love span{
+    margin-left: 5px;
+}
+
+/**Colores de los iconos **/
+.docs svg{
+    color: #93BFCF;
+}
+
+.videos svg{
+    color: #C9F4AA;
+}
+
+.expo svg{
+    color: #FCE22A;
+}
+
+.love  svg{
+    color: #D61355;
+}
+
+.backers svg{
+    color: #F94A29;
+}
+
+.sponsor{
+    background-color: #FFCEFE;
+    height: 30px;
+    width: 100px;
+    font-size: 10px;
+    border-radius: 5px;
+    color: white;
+
+}
+
+.download{
+    background-color: #C9F4AA;
+    color: white;
+    height: 30px;
+    width: 100px;
+    font-size: 10px;
+    border-radius: 5px;
+}
+
+.servicios span{
+    color: black;
+}
+
+.final strong{
+    padding: 5px;
+    font-size: 15px;
+}
+
+.final svg{
+    padding: 5px;
+}
+
+.sponsor strong{
+    margin-right: 5000px;
+}
+
+.download strong{
+    margin-left: 10px;
+}

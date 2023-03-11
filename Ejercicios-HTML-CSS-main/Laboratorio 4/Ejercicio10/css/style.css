@@ -1,0 +1,167 @@
+.contenedor {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.indice-columna {
+    display: none;
+}
+
+.principal {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    border: 1px solid gray;
+    padding: 2rem;
+}
+
+.botones {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+
+
+/* Lo de arriba */
+select {
+    width: 100%;
+    height: 35px;
+}
+
+.crear {
+    background-color: #C92C6D;
+    border-radius: 25px;
+    padding: 10px;
+}
+
+.funciones {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    margin-bottom: 20px;
+}
+
+.funcion {
+    margin-right: 10px;
+}
+
+.funcion span{
+    display: none;
+}
+/* Temas */
+.apartado{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 2px solid #C92C6D;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #C92C6D;
+}
+
+.apartado svg{
+    padding: 30px;
+    fill: #C92C6D;
+}
+.tarea,
+.tarea-borrador {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.tarea-borrador {
+    color: gray;
+}
+
+.tarea-titulo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+span {
+    font-size: 15px;
+    margin-top: 20px;
+}
+
+p {
+    margin-left: 10px;
+}
+
+.tarea svg {
+    background-color: #C92C6D;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.tarea-borrador svg {
+    background-color: gray;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+@media(min-width:978px) {
+    .contenedor {
+        display: grid;
+        grid-template-columns: 25% 75%;
+        border: 1px solid gray;
+    }
+
+    .principal{
+        border: none;
+    }
+
+    .indice-columna{
+        display: flex;
+        flex-direction: column;
+        height: 500px;
+    }
+
+    .indice-columna a{
+        text-decoration: none;
+        color: black;
+    }
+
+    .lista{
+        padding: 15px;
+    }
+
+    ul{
+        list-style-type: none;
+    }
+
+    select {
+        display: none;
+    }
+
+    .funcion{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .funcion span{
+        display: block;
+        color: #C92C6D;
+        font-size: 14px;
+    }
+
+    .funcion svg{
+        margin-top: 20px;
+        margin-right: 5px;
+    }
+
+    .botones{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+}
