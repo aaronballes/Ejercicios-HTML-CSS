@@ -2,24 +2,37 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 1px gainsboro;
 }
 
 .servicios {
-    width: 100%;
     display: flex;
-    margin-top: 5px;
+    align-items: center;
     justify-content: space-between;
+    width: 100%;
+    color: black;
 
 }
 
-.servicios a {
-    margin-left: 13px;
+.servicios span{
+    color: black;
 }
 
 .servicios2 {
-    display: flex;
+    margin-left: 15px;
+    display: grid;
+    grid-template-columns: repeat(4, 70px);
     justify-content: space-between;
-    margin-top: 5px;
+    color: black;
+}
+
+.docs,
+.videos,
+.love,
+.expo{
+    display: flex;
+    justify-content: space-evenly;
 }
 
 svg {
@@ -32,25 +45,6 @@ a {
     text-decoration: none;
 }
 
-.final {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-    text-align: right;
-}
-
-.sponsor strong,
-.sponsor svg,
-.download strong{
-    margin: 3px;
-}
-
-.docs span,
-.videos span,
-.expo span,
-.love span{
-    margin-left: 5px;
-}
 
 /**Colores de los iconos **/
 .docs svg{
@@ -73,42 +67,41 @@ a {
     color: #F94A29;
 }
 
+/***Parte derecha*/
+.final {
+    width: 215px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: right;
+}
+
 .sponsor{
-    background-color: #FFCEFE;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: #D23369;
     height: 30px;
     width: 100px;
-    font-size: 10px;
     border-radius: 5px;
     color: white;
+    font-size: 15px;
+
 
 }
 
 .download{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #C9F4AA;
     color: white;
     height: 30px;
     width: 100px;
     font-size: 10px;
     border-radius: 5px;
-}
-
-.servicios span{
-    color: black;
-}
-
-.final strong{
-    padding: 5px;
     font-size: 15px;
 }
-
-.final svg{
-    padding: 5px;
-}
-
-.sponsor strong{
-    margin-right: 5000px;
-}
-
-.download strong{
-    margin-left: 10px;
+.sponsor svg{
+    color: white;
 }

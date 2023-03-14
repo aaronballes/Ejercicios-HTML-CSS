@@ -9,10 +9,14 @@ body {
 
 .contenedor {
     display: grid;
+    grid-template-areas: "contacto formulario";
     grid-template-columns: 50% 50%;
 }
 
 /* Contacto */
+.contacto{
+    grid-area: contacto;
+}
 h3{
     font-size: 1.5rem;
     color: var(--azul);
@@ -29,6 +33,7 @@ span {
 
 /* Formulario */
 .formulario {
+    grid-area: formulario;
     padding: 1rem;
 }
 .dividir{

@@ -1,7 +1,7 @@
 .contenedor,
 .texto {
     width: 150px;
-    box-shadow: 1px 1px 5px 1px #958a8a;
+    box-shadow: 1px 1px 10px 1px gainsboro;
     display: flex;
     flex-direction: column;
 }

@@ -1,5 +1,5 @@
 :root {
-    --gris: #F3EFE0;
+    --gris: #ECECEC;
     --oscuro: #222222;
     --blanco: #FFF;
     --negro: #000;
@@ -22,10 +22,6 @@
     display: flex;
     justify-content: space-between;
 }
-
-/* p,img{
-    display: inline-block;
-} */
 
 .titulo p{
     padding: 3px;

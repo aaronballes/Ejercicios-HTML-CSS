@@ -8,7 +8,7 @@
     text-align: center;
 }
 
-.imagenes{
+.imagenes {
     background-image: url(https://source.unsplash.com/pJ_DCj9KswI/1080x360);
     height: 100px;
     background-size: cover;
@@ -19,7 +19,7 @@
     margin: 50px;
     height: 100px;
     width: 100px;
-    border: 5px solid white;
+    border: 7px solid white;
 }
 
 .texto{
@@ -41,7 +41,7 @@
     height: 20px;
 }
 
-.iconos{
+.iconos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 }
