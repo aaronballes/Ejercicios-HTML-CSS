@@ -2,6 +2,8 @@
     width: 300px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    box-shadow: 1px 1px 10px 1px gainsboro;
 }
 
 .cuadrados {
@@ -23,27 +25,28 @@ img {
     width: 200px;
 }
 
-.titulo{
+.titulo {
     text-align: center;
 }
 
-@media (min-width: 768px){
-    .contenedor{
+@media (min-width: 768px) {
+    .contenedor {
         width: auto;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        box-shadow: 1px 1px 10px 1px gainsboro;
+
     }
 
-    .cuadrados{
+    .cuadrados {
         display: grid;
         grid-template-columns: 50% 50%;
         grid-template-rows: 50% 50%;
     }
 
-    .cuadrado{
+    .cuadrado {
         padding: 50px;
     }
 }
-
