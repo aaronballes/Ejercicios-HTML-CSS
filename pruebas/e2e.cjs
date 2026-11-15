@@ -68,6 +68,60 @@ const check = (name, ok) => { checks.push(ok); console.log(`${ok ? '✔' : '✘'
   await libre.click('text=Canal TS');
   check('reproduce MPEG-TS (fuente M3U)', await plays(libre));
 
+  // --- Smart TV: navegador de tele, solo con las teclas del mando ---
+  const TV_UA = 'Mozilla/5.0 (SMART-TV; Linux; Tizen 5.0) AppleWebKit/537.36 (KHTML, like Gecko) Version/5.0 TV Safari/537.36';
+  const tvCtx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, userAgent: TV_UA });
+  const tv = await tvCtx.newPage();
+  tv.on('pageerror', (e) => errors.push(String(e)));
+  await tv.goto(M3U);
+  await tv.waitForSelector('.channels li');
+  const focused = () => tv.evaluate(() => {
+    const el = document.activeElement;
+    return `${el.className || el.tagName.toLowerCase()}:${(el.textContent || el.placeholder || '').trim()}`;
+  });
+  const watching = () => tv.evaluate(() => document.querySelector('.app').classList.contains('watching'));
+  const press = async (key) => { await tv.keyboard.press(key); await tv.waitForTimeout(150); };
+
+  check('tele: se activa sola y enfoca el primer canal', (await tv.evaluate(() => document.documentElement.classList.contains('tv'))) && (await focused()) === 'channel:Canal HLS');
+  await press('ArrowDown');
+  check('tele: flecha abajo pasa al canal siguiente', (await focused()) === 'channel:Canal TS');
+  if (process.env.CAPTURAS) await tv.screenshot({ path: `${process.env.CAPTURAS}/tele-lista.png` });
+  await press('Enter');
+  check('tele: OK pone el canal a pantalla completa', (await watching()) && (await plays(tv)));
+  await press('ArrowUp');
+  check('tele: flecha arriba cambia de canal viendo la tele', (await tv.textContent('.osd strong')) === 'Canal HLS' && (await plays(tv)));
+  if (process.env.CAPTURAS) await tv.screenshot({ path: `${process.env.CAPTURAS}/tele-viendo.png` });
+  await press('PageDown');
+  check('tele: la tecla de canal + / - también cambia', (await tv.textContent('.osd strong')) === 'Canal TS');
+  await press('Enter');
+  check('tele: OK vuelve a la lista con el foco en el canal actual', !(await watching()) && (await focused()) === 'channel:Canal TS');
+  await press('ArrowRight');
+  await press('Enter');
+  check('tele: flecha derecha y OK marcan favorito', (await tv.locator('.fav.on').count()) === 1);
+  await press('ArrowLeft');
+  await press('ArrowLeft');
+  check('tele: flecha izquierda desde la lista va a pantalla completa', await watching());
+  await press('Escape');
+  check('tele: "atrás" vuelve a la lista', !(await watching()));
+  await press('ArrowUp'); await press('ArrowUp');
+  const onSelect = await tv.evaluate(() => document.activeElement.tagName);
+  await press('ArrowUp'); await press('ArrowUp');
+  check('tele: se llega con las flechas a categorías, buscador y botones de arriba', onSelect === 'SELECT' && (await focused()).startsWith('ghost:'));
+
+  // La versión para navegadores antiguos también tiene que arrancar.
+  const old = await tvCtx.newPage();
+  old.on('pageerror', (e) => errors.push(`antiguo: ${e}`));
+  await old.route(M3U + '/', async (route) => {
+    const res = await route.fetch();
+    const html = (await res.text())
+      .replace(/<script type="module"[^>]*>[\s\S]*?<\/script>/g, '')
+      .replace(/<link rel="modulepreload"[^>]*>/g, '')
+      .replace(/ nomodule/g, '');
+    await route.fulfill({ response: res, body: html });
+  });
+  await old.goto(M3U + '/');
+  check('tele: la versión para navegadores antiguos carga la lista', await old.waitForSelector('.channels li', { timeout: 10000 }).then(() => true, () => false));
+
   check('sin errores de JavaScript', errors.length === 0);
   if (errors.length) console.log(errors);
   await browser.close();

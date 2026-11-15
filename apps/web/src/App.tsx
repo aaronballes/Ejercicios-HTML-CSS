@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api, Unauthorized, type Category, type Channel, type User } from './api';
 import { Users } from './Users';
+import { channelStep, detectTv, isBack, isOk, isTextInput, keyDir, moveFocus, saveTv } from './tv';
 import { Player } from './Player';
 
 const FAVS = '★ Favoritos';
@@ -89,6 +90,9 @@ function Main({
   onLogout: () => void;
 }) {
   const [showUsers, setShowUsers] = useState(false);
+  const [tv, setTv] = useState(detectTv);
+  // En la tele, "viendo" es el vídeo a pantalla completa sin lista.
+  const [watching, setWatching] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [total, setTotal] = useState(0);
   const [category, setCategory] = useState(ALL);
@@ -157,6 +161,74 @@ function Main({
   const toggleFav = (id: string) =>
     setFavs((f) => (f.includes(id) ? f.filter((x) => x !== id) : [...f, id]));
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('tv', tv);
+    if (!tv) setWatching(false);
+  }, [tv]);
+
+  // Cambia al canal anterior o siguiente de la lista que se está viendo.
+  const zap = useCallback(
+    (step: number) => {
+      if (items.length === 0) return;
+      const i = items.findIndex((ch) => ch.id === current?.id);
+      const next = i < 0 ? 0 : (i + step + items.length) % items.length;
+      setCurrent(items[next]);
+    },
+    [items, current, setCurrent],
+  );
+
+  useEffect(() => {
+    if (!tv) return;
+    const onKey = (e: KeyboardEvent) => {
+      const dialog = document.querySelector('dialog[open]');
+      const dir = keyDir(e);
+      const step = channelStep(e);
+
+      if (watching && !dialog) {
+        if (dir === 'up' || dir === 'down' || step) zap(step || (dir === 'up' ? -1 : 1));
+        else if (dir || isOk(e) || isBack(e)) setWatching(false);
+        else return;
+        e.preventDefault();
+        return;
+      }
+      if (dialog) {
+        if (dir && !(isTextInput(e.target) && (dir === 'left' || dir === 'right'))) {
+          e.preventDefault();
+          moveFocus(dir, dialog);
+        }
+        return;
+      }
+      if (step) {
+        e.preventDefault();
+        zap(step);
+        return;
+      }
+      if (isBack(e) && current) {
+        e.preventDefault();
+        setWatching(true);
+        return;
+      }
+      if (!dir) return;
+      if (isTextInput(e.target) && (dir === 'left' || dir === 'right')) return;
+      e.preventDefault();
+      // A la izquierda de la lista está el vídeo: se pasa a pantalla completa.
+      if (!moveFocus(dir) && dir === 'left' && current) setWatching(true);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [tv, watching, zap, current]);
+
+  // Con mando siempre tiene que haber algo enfocado: si el foco se pierde, vuelve a la lista.
+  useEffect(() => {
+    if (!tv || watching || showUsers) return;
+    const active = document.activeElement;
+    if (active && active !== document.body && document.body.contains(active)) return;
+    const target =
+      document.querySelector<HTMLElement>('.channels li.active .channel') ??
+      document.querySelector<HTMLElement>('.channels .channel');
+    target?.focus();
+  }, [tv, watching, showUsers, items]);
+
   const tabs = [
     { name: ALL, count: total },
     { name: FAVS, count: favs.length },
@@ -164,7 +236,7 @@ function Main({
   ];
 
   return (
-    <div className="app">
+    <div className={watching ? 'app watching' : 'app'}>
       <header>
         <strong>Reproductor IPTV</strong>
         <span className="now">{current ? current.name : ''}</span>
@@ -174,6 +246,15 @@ function Main({
           onClick={() => api.refresh().then(loadCategories).catch(guard)}
         >
           Actualizar lista
+        </button>
+        <button
+          className="ghost"
+          onClick={() => {
+            saveTv(!tv);
+            setTv(!tv);
+          }}
+        >
+          {tv ? 'Salir del modo tele' : 'Modo tele'}
         </button>
         {user.admin && (
           <button className="ghost" onClick={() => setShowUsers(true)}>
@@ -188,7 +269,14 @@ function Main({
       </header>
 
       <main>
-        <Player channel={current} />
+        <Player channel={current} tv={tv} />
+        {watching && current && (
+          <div className="osd" key={current.id}>
+            <strong>{current.name}</strong>
+            <span>▲▼ cambiar de canal · OK lista de canales</span>
+          </div>
+        )}
+
 
         <aside>
           <input
@@ -210,7 +298,13 @@ function Main({
           <ul className="channels">
             {items.map((ch) => (
               <li key={ch.id} className={current?.id === ch.id ? 'active' : ''}>
-                <button className="channel" onClick={() => setCurrent(ch)}>
+                <button
+                  className="channel"
+                  onClick={() => {
+                    setCurrent(ch);
+                    if (tv) setWatching(true);
+                  }}
+                >
                   {ch.logo ? (
                     <img src={ch.logo} alt="" loading="lazy" referrerPolicy="no-referrer" />
                   ) : (
@@ -241,6 +335,7 @@ function Main({
               Ver más ({found - items.length})
             </button>
           )}
+          {tv && <p className="hint">▲▼ moverse · OK ver · ▶ favorito · ◀ pantalla completa</p>}
         </aside>
       </main>
       {showUsers && <Users onClose={() => setShowUsers(false)} onExpired={onLogout} />}

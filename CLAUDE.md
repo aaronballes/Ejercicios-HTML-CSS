@@ -9,7 +9,7 @@ con cuentas de usuario. El planteamiento y las fases están en `README.md`.
   - `source.ts` carga y cachea la lista · `proxy.ts` proxy de vídeo y reescritura de HLS
   - `users.ts` cuentas y sesiones · `index.ts` rutas de la API · `config.ts` variables de entorno
 - `apps/web` — React + Vite + TypeScript. `App.tsx` pantalla principal, `Player.tsx` vídeo,
-  `Users.tsx` gestión de usuarios, `api.ts` llamadas al servidor.
+  `Users.tsx` gestión de usuarios, `tv.ts` modo tele y mando, `api.ts` llamadas al servidor.
 - `pruebas/` — proveedor IPTV falso y prueba de navegador.
 
 ## Comandos
@@ -32,7 +32,11 @@ con cuentas de usuario. El planteamiento y las fases están en `README.md`.
    añade su comprobación en `pruebas/e2e.cjs`.
 5. Interfaz, mensajes de error, comentarios y commits en **español**. Los mensajes que ve el
    usuario dicen qué ha pasado y qué puede hacer, sin jerga técnica.
-6. Sin dependencias nuevas si se resuelve en pocas líneas con lo que ya hay.
+6. **Tiene que funcionar en teles antiguas** (Chrome 53). En `styles.css` no se usa grid,
+   `gap`, `min()`, `aspect-ratio` ni `:focus-within`; los tamaños van en `rem` para que el
+   modo tele escale. Todo control nuevo debe alcanzarse con las flechas (`tv.ts` mueve el
+   foco por posición en pantalla entre `button`, `input` y `select`) y verse bien enfocado.
+7. Sin dependencias nuevas si se resuelve en pocas líneas con lo que ya hay.
 
 ## Equipo (`.claude/agents/`)
 

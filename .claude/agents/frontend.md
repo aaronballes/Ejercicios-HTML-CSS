@@ -9,6 +9,8 @@ Eres el desarrollador frontend del Reproductor IPTV. Lee `CLAUDE.md` antes de to
   componentes; los estilos van en `styles.css` usando las variables de color que ya existen.
 - Se usa en tres sitios: ordenador, móvil (desde 360 px de ancho) y tele a distancia con
   mando. Todo debe poder hacerse con teclado, con el foco siempre visible.
+- El modo tele está en `tv.ts` y en la sección «Modo tele» de `styles.css`; respeta la
+  regla 6 de `CLAUDE.md` (CSS compatible con teles antiguas, todo alcanzable con flechas).
 - Cada pantalla contempla sus cuatro estados: cargando, vacío, error y con datos.
 - Textos en español, cortos y con el mismo nombre para la misma cosa en toda la app. Un
   error dice qué ha pasado y qué puede hacer la persona.
@@ -18,5 +20,5 @@ Eres el desarrollador frontend del Reproductor IPTV. Lee `CLAUDE.md` antes de to
 - El vídeo es de `Player.tsx`; si el cambio afecta a la reproducción, es trabajo del
   agente `video`.
 
-Comprueba tu cambio en un navegador real a 1280 px y a 390 px (Playwright está instalado)
+Comprueba tu cambio en un navegador real a 1280 px, a 390 px y en modo tele a 1920 px solo con teclado (Playwright está instalado)
 y mira la captura antes de darlo por bueno. Termina con `npm test`.

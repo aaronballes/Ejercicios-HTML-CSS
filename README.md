@@ -4,7 +4,8 @@ Aplicación web para ver los canales de una suscripción IPTV propia desde el na
 (ordenador, móvil y tele), instalable como app (PWA).
 
 > Estado: **fases 0–2 hechas** (lista de canales, buscador, favoritos, reproductor y cuentas de usuario).
-> Pendiente: guía de programación, PWA instalable, modo tele y películas/series.
+> Incluye modo tele para manejarla con el mando.
+> Pendiente: guía de programación, PWA instalable y películas/series.
 
 ## Puesta en marcha
 
@@ -36,6 +37,30 @@ Para probar: `npm test` (usa un proveedor falso local; necesita `ffmpeg` y Playw
 - Favoritos y último canal son propios de cada usuario (se guardan en su navegador).
 - Si la app va a ser accesible desde fuera de casa, ponla detrás de HTTPS (por ejemplo con
   Caddy o un túnel): sin él las contraseñas viajan en claro.
+
+### En una Smart TV
+
+1. Abre el navegador de la tele y entra en `http://<ip-del-equipo>:3000` (la tele y el
+   servidor tienen que estar en la misma red, o el servidor ser accesible desde fuera).
+2. Inicia sesión una vez con el teclado en pantalla; la sesión dura 30 días.
+3. La app detecta la tele y activa sola el **modo tele**. Si no lo hace, pulsa el botón
+   «Modo tele» de arriba (también sirve para probarlo en un ordenador).
+
+| Mando | En la lista | Viendo un canal |
+|---|---|---|
+| ▲ ▼ | Moverse | Canal anterior / siguiente |
+| OK | Ver el canal a pantalla completa | Volver a la lista |
+| ▶ | Ir a la estrella de favorito | Volver a la lista |
+| ◀ | Pantalla completa | Volver a la lista |
+| Canal + / − | Cambiar de canal | Cambiar de canal |
+| Atrás | Pantalla completa | Volver a la lista |
+
+Funciona con el navegador de teles Samsung (Tizen), LG (webOS), Android TV / Google TV y
+Fire TV. Se genera una versión del código para navegadores antiguos (Chrome 53 en adelante,
+aproximadamente teles de 2018 o posteriores). En algunas teles el botón «Atrás» lo captura el
+propio navegador y sale de la página: en ese caso usa OK o las flechas.
+
+Todavía no es una app instalable desde la tienda de la tele; se usa desde su navegador.
 
 ## 1. Qué hará
 
@@ -99,7 +124,7 @@ tiene que ser una máquina propia o un VPS con ancho de banda suficiente.
 | 2 ✅ | Reproductor (HLS + MPEG-TS) a través del proxy | Se reproduce un canal en Chrome, Safari de iPhone y Android |
 | 3 (parcial) | Favoritos ✅, último canal visto ✅, cambio rápido | Se puede usar a diario sin pasar por la lista completa |
 | 4 | Guía de programación (EPG) | Cada canal muestra "ahora" y "después" |
-| 5 | PWA instalable, mando/teclado para tele | Se instala en el móvil y se maneja con las flechas |
+| 5 (parcial) | Mando/teclado para tele ✅, PWA instalable | Se instala en el móvil y se maneja con las flechas |
 | 6 | Películas y series (VOD), si la cuenta las tiene | Catálogo con carátulas y reanudación |
 
 Las fases 0–2 son el producto mínimo; a partir de ahí cada una es independiente.
