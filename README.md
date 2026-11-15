@@ -3,12 +3,12 @@
 Aplicación web para ver los canales de una suscripción IPTV propia desde el navegador
 (ordenador, móvil y tele), instalable como app (PWA).
 
-> Estado: **fases 0–2 hechas** (lista de canales, buscador, favoritos y reproductor).
+> Estado: **fases 0–2 hechas** (lista de canales, buscador, favoritos, reproductor y cuentas de usuario).
 > Pendiente: guía de programación, PWA instalable, modo tele y películas/series.
 
 ## Puesta en marcha
 
-1. Copia `.env.example` a `.env` y rellena la fuente (M3U **o** Xtream) y `APP_PASSWORD`.
+1. Copia `.env.example` a `.env` y rellena la fuente (M3U **o** Xtream), `ADMIN_PASSWORD` y `APP_SECRET`.
 2. Arranca con una de estas dos opciones:
 
 ```bash
@@ -21,9 +21,21 @@ npm run build
 npm start
 ```
 
-3. Abre `http://<ip-del-equipo>:3000`.
+3. Abre `http://<ip-del-equipo>:3000` y entra como `admin` con la contraseña de `ADMIN_PASSWORD`.
+4. Con el botón **Usuarios** crea una cuenta para cada persona.
 
 Para desarrollar: `npm run dev` (interfaz en el puerto 5173, servidor en el 3000).
+Para probar: `npm test` (usa un proveedor falso local; necesita `ffmpeg` y Playwright).
+
+### Usuarios
+
+- El administrador se define en `.env`; solo él crea usuarios, les cambia la contraseña o los elimina.
+- Las contraseñas se guardan con hash (scrypt) en `data/users.json`, fuera del repositorio.
+- Al eliminar a alguien o cambiarle la contraseña, sus sesiones abiertas se cierran.
+- Tras 5 intentos fallidos desde una misma IP, el acceso se bloquea 10 minutos.
+- Favoritos y último canal son propios de cada usuario (se guardan en su navegador).
+- Si la app va a ser accesible desde fuera de casa, ponla detrás de HTTPS (por ejemplo con
+  Caddy o un túnel): sin él las contraseñas viajan en claro.
 
 ## 1. Qué hará
 
@@ -32,7 +44,7 @@ Para desarrollar: `npm run dev` (interfaz en el puerto 5173, servidor en el 3000
 - Reproductor con cambio rápido de canal, pantalla completa y "seguir viendo".
 - Guía de programación (EPG, formato XMLTV) si el proveedor la ofrece.
 - Películas y series (VOD) si la cuenta las incluye — fase posterior.
-- Acceso protegido con contraseña: las credenciales de la IPTV nunca llegan al navegador.
+- Acceso con usuario y contraseña para cada persona; las credenciales de la IPTV nunca llegan al navegador.
 
 ## 2. Arquitectura
 
@@ -71,6 +83,8 @@ tiene que ser una máquina propia o un VPS con ancho de banda suficiente.
 ├── apps/
 │   ├── server/     API, proxy de vídeo, importación de lista y EPG
 │   └── web/        Interfaz React (PWA)
+├── pruebas/        Proveedor falso y prueba de navegador
+├── .claude/agents/ Equipo de agentes del proyecto (ver CLAUDE.md)
 ├── docker-compose.yml
 ├── .env.example    Plantilla de configuración (sin datos reales)
 └── README.md
@@ -92,8 +106,9 @@ Las fases 0–2 son el producto mínimo; a partir de ahí cada una es independie
 
 ## 5. Riesgos conocidos
 
-- **Límite de conexiones**: muchas cuentas permiten 1 sola reproducción simultánea. La app
-  cerrará la conexión anterior antes de abrir otra.
+- **Límite de conexiones**: muchas cuentas permiten 1 sola reproducción simultánea. Con varios
+  usuarios viendo a la vez canales distintos, el proveedor puede cortar a alguno. La app todavía
+  no reparte ni avisa de esto.
 - **Códecs**: canales en HEVC/H.265 o audio AC3 no se reproducen en todos los navegadores;
   para esos habría que convertir con `ffmpeg`, lo que consume CPU.
 - **Bloqueos del proveedor**: algunos restringen por IP o por tipo de cliente; puede hacer falta

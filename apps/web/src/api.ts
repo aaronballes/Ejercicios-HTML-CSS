@@ -11,24 +11,43 @@ export interface Category {
   count: number;
 }
 
+export interface User {
+  name: string;
+  admin: boolean;
+}
+
+export interface Account {
+  name: string;
+  createdAt: number;
+}
+
 export class Unauthorized extends Error {}
+
+const json = (method: string, body: unknown): RequestInit => ({
+  method,
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify(body),
+});
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, init);
-  if (res.status === 401) throw new Unauthorized();
   const body = await res.json().catch(() => ({}));
+  if (res.status === 401 && path !== '/api/login') throw new Unauthorized();
   if (!res.ok) throw new Error(body.error ?? `Error ${res.status}`);
   return body as T;
 }
 
 export const api = {
-  session: () => call<{ logged: boolean; authRequired: boolean }>('/api/session'),
-  login: (password: string) =>
-    call<{ ok: true }>('/api/login', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ password }),
-    }),
+  session: () => call<{ logged: boolean; authRequired: boolean; user: User | null }>('/api/session'),
+  login: (username: string, password: string) =>
+    call<{ ok: true; user: User }>('/api/login', json('POST', { username, password })),
+  users: () => call<{ users: Account[] }>('/api/users'),
+  createUser: (username: string, password: string) =>
+    call<{ users: Account[] }>('/api/users', json('POST', { username, password })),
+  setPassword: (name: string, password: string) =>
+    call<{ users: Account[] }>(`/api/users/${encodeURIComponent(name)}/password`, json('PUT', { password })),
+  deleteUser: (name: string) =>
+    call<{ users: Account[] }>(`/api/users/${encodeURIComponent(name)}`, { method: 'DELETE' }),
   logout: () => call<{ ok: true }>('/api/logout', { method: 'POST' }),
   refresh: () => call<{ total: number }>('/api/refresh', { method: 'POST' }),
   categories: () => call<{ total: number; categories: Category[] }>('/api/categories'),

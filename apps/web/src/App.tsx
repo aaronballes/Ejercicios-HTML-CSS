@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { api, Unauthorized, type Category, type Channel } from './api';
+import { api, Unauthorized, type Category, type Channel, type User } from './api';
+import { Users } from './Users';
 import { Player } from './Player';
 
 const FAVS = '★ Favoritos';
@@ -18,7 +19,8 @@ function useStored<T>(key: string, initial: T) {
   return [value, setValue] as const;
 }
 
-function Login({ onDone }: { onDone: () => void }) {
+function Login({ onDone }: { onDone: (user: User) => void }) {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   return (
@@ -27,18 +29,25 @@ function Login({ onDone }: { onDone: () => void }) {
       onSubmit={async (e) => {
         e.preventDefault();
         try {
-          await api.login(password);
-          onDone();
+          onDone((await api.login(username, password)).user);
         } catch (err) {
-          setError((err as Error).message || 'Contraseña incorrecta');
+          setError((err as Error).message);
         }
       }}
     >
       <h1>Reproductor IPTV</h1>
       <input
+        placeholder="Usuario"
+        autoFocus
+        autoCapitalize="none"
+        autoComplete="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
         type="password"
         placeholder="Contraseña"
-        autoFocus
+        autoComplete="current-password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
@@ -49,8 +58,37 @@ function Login({ onDone }: { onDone: () => void }) {
 }
 
 export function App() {
-  const [session, setSession] = useState<'loading' | 'in' | 'out'>('loading');
+  const [user, setUser] = useState<User | null | undefined>(undefined);
   const [authRequired, setAuthRequired] = useState(true);
+
+  useEffect(() => {
+    api
+      .session()
+      .then((s) => {
+        setAuthRequired(s.authRequired);
+        setUser(s.user);
+      })
+      .catch(() => setUser(null));
+  }, []);
+
+  if (user === undefined) return null;
+  if (!user) return <Login onDone={setUser} />;
+  // La clave hace que favoritos y último canal sean propios de cada usuario.
+  return (
+    <Main key={user.name} user={user} authRequired={authRequired} onLogout={() => setUser(null)} />
+  );
+}
+
+function Main({
+  user,
+  authRequired,
+  onLogout,
+}: {
+  user: User;
+  authRequired: boolean;
+  onLogout: () => void;
+}) {
+  const [showUsers, setShowUsers] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [total, setTotal] = useState(0);
   const [category, setCategory] = useState(ALL);
@@ -59,22 +97,13 @@ export function App() {
   const [found, setFound] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [current, setCurrent] = useStored<Channel | null>('iptv.current', null);
-  const [favs, setFavs] = useStored<string[]>('iptv.favs', []);
+  const [current, setCurrent] = useStored<Channel | null>(`iptv.current.${user.name}`, null);
+  const [favs, setFavs] = useStored<string[]>(`iptv.favs.${user.name}`, []);
 
   const guard = useCallback((err: unknown) => {
-    if (err instanceof Unauthorized) setSession('out');
+    if (err instanceof Unauthorized) onLogout();
     else setError((err as Error).message);
-  }, []);
-
-  useEffect(() => {
-    api
-      .session()
-      .then((s) => {
-        setAuthRequired(s.authRequired);
-        setSession(s.logged ? 'in' : 'out');
-      })
-      .catch(() => setSession('out'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadCategories = useCallback(() => {
@@ -89,8 +118,8 @@ export function App() {
   }, [guard]);
 
   useEffect(() => {
-    if (session === 'in') void loadCategories();
-  }, [session, loadCategories]);
+    void loadCategories();
+  }, [loadCategories]);
 
   const query = useMemo(() => {
     if (category === FAVS) return { ids: favs, q };
@@ -100,7 +129,6 @@ export function App() {
   }, [category, q, category === FAVS ? favs : null]);
 
   useEffect(() => {
-    if (session !== 'in') return;
     let stale = false;
     setBusy(true);
     const t = setTimeout(() => {
@@ -118,7 +146,7 @@ export function App() {
       stale = true;
       clearTimeout(t);
     };
-  }, [session, query, guard, total]);
+  }, [query, guard, total]);
 
   const more = () =>
     api
@@ -128,9 +156,6 @@ export function App() {
 
   const toggleFav = (id: string) =>
     setFavs((f) => (f.includes(id) ? f.filter((x) => x !== id) : [...f, id]));
-
-  if (session === 'loading') return null;
-  if (session === 'out') return <Login onDone={() => setSession('in')} />;
 
   const tabs = [
     { name: ALL, count: total },
@@ -150,8 +175,13 @@ export function App() {
         >
           Actualizar lista
         </button>
+        {user.admin && (
+          <button className="ghost" onClick={() => setShowUsers(true)}>
+            Usuarios
+          </button>
+        )}
         {authRequired && (
-          <button className="ghost" onClick={() => api.logout().then(() => setSession('out'))}>
+          <button className="ghost" title={`Sesión de ${user.name}`} onClick={() => api.logout().then(onLogout)}>
             Salir
           </button>
         )}
@@ -213,6 +243,7 @@ export function App() {
           )}
         </aside>
       </main>
+      {showUsers && <Users onClose={() => setShowUsers(false)} onExpired={onLogout} />}
     </div>
   );
 }

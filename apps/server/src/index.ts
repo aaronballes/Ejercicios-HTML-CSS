@@ -1,62 +1,119 @@
 import { existsSync } from 'node:fs';
-import { timingSafeEqual } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import Fastify from 'fastify';
+import Fastify, { type FastifyReply } from 'fastify';
 import cookie from '@fastify/cookie';
 import fastifyStatic from '@fastify/static';
 import { config } from './config.js';
 import { getCatalog } from './source.js';
 import { pipeUpstream, unseal } from './proxy.js';
+import {
+  authenticate,
+  createUser,
+  deleteUser,
+  issueSession,
+  listUsers,
+  loadUsers,
+  readSession,
+  setPassword,
+  UserError,
+  type SessionUser,
+} from './users.js';
 
 const app = Fastify({ logger: { level: 'info' } });
 await app.register(cookie, { secret: config.secret });
 
 const COOKIE = 'sesion';
-const authRequired = Boolean(config.appPassword);
+const authRequired = Boolean(config.admin.password);
 if (!authRequired) {
-  app.log.warn('APP_PASSWORD está vacío: la app queda abierta a cualquiera que llegue a este puerto.');
+  app.log.warn('ADMIN_PASSWORD está vacío: la app queda abierta, sin cuentas, a cualquiera que llegue a este puerto.');
 }
+await loadUsers();
 
-const isLogged = (raw?: string) => {
-  if (!authRequired) return true;
-  if (!raw) return false;
+const OPEN_USER: SessionUser = { name: '', admin: false };
+
+function currentUser(raw?: string): SessionUser | null {
+  if (!authRequired) return OPEN_USER;
+  if (!raw) return null;
   const r = app.unsignCookie(raw);
-  return r.valid && r.value === 'ok';
-};
+  return r.valid && r.value ? readSession(r.value) : null;
+}
 
 app.addHook('onRequest', async (req, reply) => {
   const path = req.url.split('?')[0];
   if (!path.startsWith('/api/') || path === '/api/login' || path === '/api/session') return;
-  if (!isLogged(req.cookies[COOKIE])) return reply.code(401).send({ error: 'No autorizado' });
+  const user = currentUser(req.cookies[COOKIE]);
+  if (!user) return reply.code(401).send({ error: 'No autorizado' });
+  if (path.startsWith('/api/users') && !user.admin) {
+    return reply.code(403).send({ error: 'Solo el administrador puede gestionar usuarios' });
+  }
 });
 
-app.get('/api/session', async (req) => ({
-  logged: isLogged(req.cookies[COOKIE]),
-  authRequired,
-}));
+app.get('/api/session', async (req) => {
+  const user = currentUser(req.cookies[COOKIE]);
+  return { logged: Boolean(user), authRequired, user };
+});
 
-app.post<{ Body: { password?: string } }>('/api/login', async (req, reply) => {
-  const given = Buffer.from(String(req.body?.password ?? ''));
-  const expected = Buffer.from(config.appPassword);
-  const ok = authRequired && given.length === expected.length && timingSafeEqual(given, expected);
-  if (!ok) {
-    await new Promise((r) => setTimeout(r, 500));
-    return reply.code(401).send({ error: 'Contraseña incorrecta' });
+// Freno a los intentos de adivinar contraseñas: 5 fallos por IP y se bloquea 10 minutos.
+const MAX_FAILS = 5;
+const BLOCK_MS = 10 * 60_000;
+const fails = new Map<string, { count: number; until: number }>();
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, f] of fails) if (f.until < now) fails.delete(ip);
+}, 60_000).unref();
+
+app.post<{ Body: { username?: string; password?: string } }>('/api/login', async (req, reply) => {
+  const now = Date.now();
+  const f = fails.get(req.ip);
+  if (f && f.count >= MAX_FAILS && f.until > now) {
+    return reply.code(429).send({ error: 'Demasiados intentos. Espera unos minutos.' });
   }
-  reply.setCookie(COOKIE, 'ok', {
+  const user = authRequired ? await authenticate(req.body?.username, req.body?.password) : null;
+  if (!user) {
+    const prev = f && f.until > now ? f.count : 0;
+    fails.set(req.ip, { count: prev + 1, until: now + BLOCK_MS });
+    return reply.code(401).send({ error: 'Usuario o contraseña incorrectos' });
+  }
+  fails.delete(req.ip);
+  reply.setCookie(COOKIE, issueSession(user.name), {
     signed: true,
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 * 30,
   });
-  return { ok: true };
+  return { ok: true, user };
 });
 
 app.post('/api/logout', async (_req, reply) => {
   reply.clearCookie(COOKIE, { path: '/' });
   return { ok: true };
 });
+
+const userAction = async (reply: FastifyReply, action: () => Promise<void>) => {
+  try {
+    await action();
+    return { users: listUsers() };
+  } catch (err) {
+    if (err instanceof UserError) return reply.code(400).send({ error: err.message });
+    throw err;
+  }
+};
+
+app.get('/api/users', async () => ({ users: listUsers() }));
+
+app.post<{ Body: { username?: string; password?: string } }>('/api/users', (req, reply) =>
+  userAction(reply, () => createUser(req.body?.username, req.body?.password)),
+);
+
+app.put<{ Params: { name: string }; Body: { password?: string } }>(
+  '/api/users/:name/password',
+  (req, reply) => userAction(reply, () => setPassword(req.params.name, req.body?.password)),
+);
+
+app.delete<{ Params: { name: string } }>('/api/users/:name', (req, reply) =>
+  userAction(reply, () => deleteUser(req.params.name)),
+);
 
 app.get('/api/categories', async (_req, reply) => {
   try {
