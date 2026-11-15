@@ -19,7 +19,7 @@ import {
   type SessionUser,
 } from './users.js';
 
-const app = Fastify({ logger: { level: 'info' } });
+const app = Fastify({ logger: { level: process.env.LOG_LEVEL || 'info' } });
 await app.register(cookie, { secret: config.secret });
 
 const COOKIE = 'sesion';
@@ -185,4 +185,10 @@ if (existsSync(webDist)) {
   });
 }
 
-await app.listen({ port: config.port, host: '0.0.0.0' });
+try {
+  await app.listen({ port: config.port, host: '0.0.0.0' });
+} catch (err) {
+  if ((err as NodeJS.ErrnoException).code !== 'EADDRINUSE') throw err;
+  console.error(`El puerto ${config.port} ya está en uso: ¿la aplicación ya está abierta en otra ventana?`);
+  process.exit(1);
+}

@@ -9,21 +9,42 @@ Aplicación web para ver los canales de una suscripción IPTV propia desde el na
 
 ## Puesta en marcha
 
-1. Copia `.env.example` a `.env` y rellena la fuente (M3U **o** Xtream), `ADMIN_PASSWORD` y `APP_SECRET`.
-2. Arranca con una de estas dos opciones:
+La aplicación tiene que estar funcionando en un ordenador de tu casa. La tele, el móvil y los
+demás aparatos se conectan a ese ordenador por la wifi.
+
+### La forma fácil
+
+1. Descarga el código (botón verde **Code → Download ZIP** en GitHub) y descomprímelo.
+2. Ejecuta el instalador:
+   - **Windows:** doble clic en `iniciar.bat`.
+   - **Mac:** doble clic en `iniciar.command` (la primera vez: clic derecho → Abrir).
+   - **Linux:** `./iniciar.sh` en una terminal.
+3. La primera vez te pregunta la contraseña de administrador y los datos de tu IPTV, descarga
+   lo necesario y arranca. Las siguientes veces arranca directamente.
+4. Al terminar muestra la dirección que hay que abrir en la tele o el móvil, del tipo
+   `http://192.168.1.40:3000`. Entra con el usuario `admin`.
+5. Con el botón **Usuarios** crea una cuenta para cada persona.
+
+Mientras esa ventana esté abierta, la aplicación funciona; al cerrarla o apagar el ordenador,
+se para. Si falta Node.js (el programa que la hace funcionar), el instalador de Windows intenta
+instalarlo; en Mac y Linux se descarga de <https://nodejs.org> (versión 22 o superior).
+
+Para cambiar la configuración edita el archivo `.env`; para empezar de cero, bórralo y vuelve
+a ejecutar el instalador.
+
+### A mano o con Docker
+
+Copia `.env.example` a `.env`, rellénalo y usa una de estas opciones:
 
 ```bash
 # Con Docker
 docker compose up -d --build
 
-# Sin Docker (Node 22 o superior)
+# Sin Docker (Node 22.9 o superior)
 npm install
 npm run build
 npm start
 ```
-
-3. Abre `http://<ip-del-equipo>:3000` y entra como `admin` con la contraseña de `ADMIN_PASSWORD`.
-4. Con el botón **Usuarios** crea una cuenta para cada persona.
 
 Para desarrollar: `npm run dev` (interfaz en el puerto 5173, servidor en el 3000).
 Para probar: `npm test` (usa un proveedor falso local; necesita `ffmpeg` y Playwright).
@@ -110,6 +131,7 @@ tiene que ser una máquina propia o un VPS con ancho de banda suficiente.
 │   └── web/        Interfaz React (PWA)
 ├── pruebas/        Proveedor falso y prueba de navegador
 ├── .claude/agents/ Equipo de agentes del proyecto (ver CLAUDE.md)
+├── iniciar.*       Instalador y arranque en un paso (.bat, .command, .sh)
 ├── docker-compose.yml
 ├── .env.example    Plantilla de configuración (sin datos reales)
 └── README.md
