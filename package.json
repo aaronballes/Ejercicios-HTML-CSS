@@ -1,0 +1,11 @@
+{
+  "name": "reproductor-iptv",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w apps/server & npm run dev -w apps/web",
+    "build": "npm run build -w apps/web && npm run build -w apps/server",
+    "start": "npm start -w apps/server",
+    "typecheck": "npm run typecheck -w apps/server && npm run typecheck -w apps/web"
+  }
+}

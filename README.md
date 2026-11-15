@@ -3,7 +3,27 @@
 Aplicación web para ver los canales de una suscripción IPTV propia desde el navegador
 (ordenador, móvil y tele), instalable como app (PWA).
 
-> Estado: **planteamiento**. Todavía no hay código; este documento es la propuesta a validar.
+> Estado: **fases 0–2 hechas** (lista de canales, buscador, favoritos y reproductor).
+> Pendiente: guía de programación, PWA instalable, modo tele y películas/series.
+
+## Puesta en marcha
+
+1. Copia `.env.example` a `.env` y rellena la fuente (M3U **o** Xtream) y `APP_PASSWORD`.
+2. Arranca con una de estas dos opciones:
+
+```bash
+# Con Docker
+docker compose up -d --build
+
+# Sin Docker (Node 22 o superior)
+npm install
+npm run build
+npm start
+```
+
+3. Abre `http://<ip-del-equipo>:3000`.
+
+Para desarrollar: `npm run dev` (interfaz en el puerto 5173, servidor en el 3000).
 
 ## 1. Qué hará
 
@@ -37,7 +57,7 @@ Hace falta un servidor intermedio, no basta con una web estática, por tres moti
 | Frontend | React + Vite + TypeScript | Rápido de desarrollar, buen soporte PWA |
 | Vídeo | `hls.js` (HLS) y `mpegts.js` (MPEG-TS) | Cubren los dos formatos habituales en IPTV |
 | Backend | Node + Fastify + TypeScript | Mismo lenguaje en todo el proyecto, buen streaming |
-| Datos | SQLite | Canales, EPG y favoritos sin montar una base de datos aparte |
+| Datos | Memoria + `localStorage` (SQLite cuando llegue el EPG) | La lista se cachea en el servidor; favoritos y último canal, en el navegador |
 | Conversión (opcional) | `ffmpeg` | Solo si algún canal usa un códec que el navegador no admite |
 | Despliegue | Docker Compose | Un solo comando en un mini PC, Raspberry Pi, NAS o VPS |
 
@@ -60,10 +80,10 @@ tiene que ser una máquina propia o un VPS con ancho de banda suficiente.
 
 | Fase | Entregable | Se da por buena cuando… |
 |---|---|---|
-| 0 | Esqueleto del proyecto, Docker, configuración por `.env` | `docker compose up` abre una página vacía con login |
-| 1 | Importar la lista y mostrar canales por categoría con buscador | Se ven todos los canales de la cuenta con su logo |
-| 2 | Reproductor (HLS + MPEG-TS) a través del proxy | Se reproduce un canal en Chrome, Safari de iPhone y Android |
-| 3 | Favoritos, último canal visto, cambio rápido | Se puede usar a diario sin pasar por la lista completa |
+| 0 ✅ | Esqueleto del proyecto, Docker, configuración por `.env` | `docker compose up` abre una página vacía con login |
+| 1 ✅ | Importar la lista y mostrar canales por categoría con buscador | Se ven todos los canales de la cuenta con su logo |
+| 2 ✅ | Reproductor (HLS + MPEG-TS) a través del proxy | Se reproduce un canal en Chrome, Safari de iPhone y Android |
+| 3 (parcial) | Favoritos ✅, último canal visto ✅, cambio rápido | Se puede usar a diario sin pasar por la lista completa |
 | 4 | Guía de programación (EPG) | Cada canal muestra "ahora" y "después" |
 | 5 | PWA instalable, mando/teclado para tele | Se instala en el móvil y se maneja con las flechas |
 | 6 | Películas y series (VOD), si la cuenta las tiene | Catálogo con carátulas y reanudación |
