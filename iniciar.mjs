@@ -5,8 +5,10 @@ import { randomBytes } from 'node:crypto';
 import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { networkInterfaces } from 'node:os';
 import { createInterface } from 'node:readline';
+import { fileURLToPath } from 'node:url';
 
-process.chdir(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+// fileURLToPath: así funciona aunque la carpeta tenga espacios o tildes.
+process.chdir(fileURLToPath(new URL('.', import.meta.url)));
 const say = (text = '') => console.log(text);
 const title = (text) => say(`\n=== ${text} ===`);
 
